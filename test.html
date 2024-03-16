@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map Display</title>
-    <!-- Add some styles to ensure the SVG content is visible and styled appropriately -->
+    <title>22대 총선 판세 스크래치패드</title>
     <style>
         text {
           pointer-events: none;
@@ -340,6 +339,8 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   const svgText = document.getElementById('editableTitle');
+  document.title = svgText.textContent;
+
   svgText.addEventListener('click', function() {
      const rect = svgText.getBoundingClientRect();
      const input = document.createElement('input');
@@ -357,6 +358,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
       input.addEventListener('blur', function() {
           svgText.textContent = input.value;
+          document.title = input.value;
           document.body.removeChild(input);
       });
   
@@ -366,6 +368,37 @@ document.addEventListener('DOMContentLoaded', function() {
           }
       });
   });
+
+
+  const svgText2 = document.getElementById('editableSubTitle');
+  svgText2.addEventListener('click', function() {
+     const rect = svgText2.getBoundingClientRect();
+     const input = document.createElement('input');
+     input.type = 'text';
+     input.value = svgText2.textContent;
+ 
+     input.style.position = 'absolute';
+     input.style.left = `${rect.left+window.scrollX}px`;
+     input.style.top = `${rect.top+window.scrollY}px`;
+     input.style.width  = `${rect.width}px`;
+     input.style.height = `${rect.height}px`;
+ 
+     document.body.appendChild(input);
+     input.focus();
+  
+      input.addEventListener('blur', function() {
+          svgText2.textContent = input.value;
+          document.body.removeChild(input);
+      });
+  
+      input.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+              input.blur();
+          }
+      });
+  });
+
+
 });
 
 </script>
@@ -405,6 +438,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 font-family: "Noto Sans KR", sans-serif;
                 font-size: 20px;
                 font-weight: bold;
+              }
+              .stsubtitle{
+                font-family: "Noto Sans KR", sans-serif;
+                font-size: 10px;
               }
               .stlegend{
                 font-family: "Noto Sans KR", sans-serif;
@@ -1678,7 +1715,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 <text id='proportionallegend4' x='500' y='85' fill='black' class='stlegend2'>비의석할당정당=회색지역구</text>
                 <text id='proportionallegeld5' x='500' y='95' fill='black' class='stlegend2'>잔당지역구의석=0 가정</text>
             </g>
-            <text id="editableTitle" x="10" y="800" fill="black" class="sttitle">22대총선 정덕 scratchpad(클릭수정)</text>
+            <g>
+                <text id="editableTitle" x="10" y="800" fill="black" class="sttitle">22대총선 정덕 scratchpad(클릭수정)</text>
+                <text id="editableSubTitle" x="10" y="820" fill="black" class="stsubtitle">비고사항(클릭수정)</text>
+            </g>
 	    <text id="source" x="400" y="800" fill="black" class="stcaption">https://github.com/WWolf/electionscratchpad_KR2024</text>
             <text id="acknowledgement" x="400" y="820" fill="black" class="stcaption">poll-mbc.co.kr/poll2024/ 시각화 참조</text>
 	    <text id="disclaimer" x="400" y="830" fill="black" class="stcaption">(주의) 습작용으로 판세 그려보는 가벼운 페이지입니다</text>
