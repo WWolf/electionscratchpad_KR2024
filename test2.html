@@ -82,6 +82,11 @@
         font-family: "Noto Sans KR", sans-serif;
         font-size: 8px;
       }
+      .stlegend3{
+        font-family: "Noto Sans KR", sans-serif;
+        font-size: 10px;
+        text-anchor: end;
+      }
       .stcaption{
         font-family: "Noto Sans KR", sans-serif;
         font-size: 8px;
@@ -119,15 +124,15 @@ const order = [1, 2, 3, 4, 5, 0, 9, 8, 7, 6];
 let colorCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Initialize count for each color index
 const labels = [
     '미정',
-    '여당 확실(Safe)', 
-    '여당 유력(Likely)', 
-    '여당 우세(Lean)', 
-    '여당 경합우세(Tilt)', 
+    '여당 확실 (Safe)', 
+    '여당 유력 (Likely)', 
+    '여당 우세 (Lean)', 
+    '여당 경합우세 (Tilt)', 
     '백중세 (TossUp)', 
-    '야당 확실(Safe)', 
-    '야당 유력(Likely)', 
-    '야당 우세(Lean)', 
-    '야당 경합우세(Tilt)'
+    '야당 확실 (Safe)', 
+    '야당 유력 (Likely)', 
+    '야당 우세 (Lean)', 
+    '야당 경합우세 (Tilt)'
 ]; // Corresponding labels
 
 
@@ -191,7 +196,84 @@ function updateBarGraph() {
     oppositionText.textContent = opposition.toString();
   }
 
+  // Also update the legend
+  const legendElements = document.querySelectorAll('.stlegend3');
+  
+  legendElements.forEach(element => {
+    element.parentNode.removeChild(element);
+  });
+  redrawLegend();
+}
 
+function setupLegend() {
+  // Legend box
+  const svgNamespace = "http://www.w3.org/2000/svg";
+  const svgContainer = document.querySelector('svg'); // Adjust if your SVG has a specific ID or class
+
+  const startX = 490; // Starting X position for the hexagon on the top right corner, adjust as needed
+  const startY = -10; // Starting Y position, adjust as needed
+  const margin = 10; // Margin between hexagons and texts
+
+  colors.forEach((color, index) => {
+
+      if (index > 0) {
+        const hexagon = document.createElementNS(svgNamespace, 'polygon');
+        // Define the points for a hexagon, adjust size as needed
+        const points = "30,15 22,30 30,45 46,45 54,30 46,15";
+        hexagon.setAttribute('points', points);
+        hexagon.setAttribute('fill', color);
+        hexagon.setAttribute('stroke', '#000'); // Add a stroke to make the hexagon visible
+        // Position each hexagon with a margin
+        hexagon.setAttribute('transform', `translate(${startX}, ${startY + index * margin}) scale(0.3)`);
+  
+        const text = document.createElementNS(svgNamespace, 'text');
+        text.textContent = labels[index];
+        text.setAttribute('x', startX + 20); // Position text next to the hexagon, adjust as needed
+        text.setAttribute('y', startY + 12.5 + index * margin); // Vertically align with the hexagon
+        text.setAttribute('fill', '#000'); // Text color
+        text.setAttribute('class', 'st2');
+        text.setAttribute('font-size', '10'); // Specify font size
+
+        const count = document.createElementNS(svgNamespace, 'text');
+        count.textContent = colorCounts[index];
+        count.setAttribute('x', startX);
+        count.setAttribute('y', startY + 12.5 + index * margin);
+        count.setAttribute('fill', '#000');
+        count.setAttribute('class', 'stlegend3');
+        count.setAttribute('font-size', '10');
+        count.setAttribute('text-anchor', 'end');
+  
+        svgContainer.appendChild(hexagon);
+        svgContainer.appendChild(text);
+        svgContainer.appendChild(count);
+    }
+  });
+}
+
+function redrawLegend() {
+  // Legend box
+  const svgNamespace = "http://www.w3.org/2000/svg";
+  const svgContainer = document.querySelector('svg'); // Adjust if your SVG has a specific ID or class
+
+  const startX = 490; // Starting X position for the hexagon on the top right corner, adjust as needed
+  const startY = -10; // Starting Y position, adjust as needed
+  const margin = 10; // Margin between hexagons and texts
+
+  colors.forEach((color, index) => {
+
+      if (index > 0) {
+        const count = document.createElementNS(svgNamespace, 'text');
+        count.textContent = colorCounts[index];
+        count.setAttribute('x', startX);
+        count.setAttribute('y', startY + 12.5 + index * margin);
+        count.setAttribute('fill', '#000');
+        count.setAttribute('class', 'stlegend3');
+        count.setAttribute('font-size', '10');
+        count.setAttribute('text-anchor', 'end');
+  
+        svgContainer.appendChild(count);
+    }
+  });
 }
 
 // Function to initialize or update the color index for each hexagon
@@ -229,6 +311,8 @@ document.addEventListener('DOMContentLoaded', function() {
       initOrUpdateHexagonColorIndex(this);
     });
   });
+
+  setupLegend();
 
   // Select text elements associated with regions
   const regionTexts = document.querySelectorAll('text.st2.st3.st4');
@@ -279,37 +363,6 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
   updateBarGraph();
-
-  // Legend box
-  const svgNamespace = "http://www.w3.org/2000/svg";
-  const svgContainer = document.querySelector('svg'); // Adjust if your SVG has a specific ID or class
-
-  const startX = 490; // Starting X position for the hexagon on the top right corner, adjust as needed
-  const startY = 0; // Starting Y position, adjust as needed
-  const margin = 10; // Margin between hexagons and texts
-
-  colors.forEach((color, index) => {
-      const hexagon = document.createElementNS(svgNamespace, 'polygon');
-      // Define the points for a hexagon, adjust size as needed
-      const points = "30,15 22,30 30,45 46,45 54,30 46,15";
-      hexagon.setAttribute('points', points);
-      hexagon.setAttribute('fill', color);
-      hexagon.setAttribute('stroke', '#000'); // Add a stroke to make the hexagon visible
-      // Position each hexagon with a margin
-      hexagon.setAttribute('transform', `translate(${startX}, ${startY + index * margin}) scale(0.3)`);
-
-      const text = document.createElementNS(svgNamespace, 'text');
-      text.textContent = labels[index];
-      text.setAttribute('x', startX + 20); // Position text next to the hexagon, adjust as needed
-      text.setAttribute('y', startY + 12.5 + index * margin); // Vertically align with the hexagon
-      text.setAttribute('fill', '#000'); // Text color
-      text.setAttribute('class', 'st2');
-      text.setAttribute('font-size', '10'); // Specify font size
-
-      svgContainer.appendChild(hexagon);
-      svgContainer.appendChild(text);
-  });
-
   
   const svgText = document.getElementById('editableTitle');
   document.title = svgText.textContent;
