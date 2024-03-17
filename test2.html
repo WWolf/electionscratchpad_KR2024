@@ -116,7 +116,7 @@ const colors = [    '#f2f2f2', // Unselected
                     'rgba(21, 36, 132, 0.2)',  // tilt
                 ];
 const order = [1, 2, 3, 4, 5, 0, 9, 8, 7, 6];
-let colorCounts = [254, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Initialize count for each color index
+let colorCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Initialize count for each color index
 const labels = [
     '미정',
     '여당 확실(Safe)', 
@@ -216,11 +216,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
   hexagons.forEach(function(hexagon) {
     // Initialize the color index directly on the hexagon elements
-    hexagon.colorIndex = 0; // Start from the first color
+    let colorIndex = colors.indexOf(hexagon.style.fill);
+    if (colorIndex === -1) {
+        hexagon.colorIndex = 0;
+        colorCounts[hexagon.colorIndex]++;
+    } else {
+        hexagon.colorIndex = colorIndex;
+        colorCounts[hexagon.colorIndex]++;
+    }
 
     hexagon.addEventListener('click', function() {
       initOrUpdateHexagonColorIndex(this);
-
     });
   });
 

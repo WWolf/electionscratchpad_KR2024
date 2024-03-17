@@ -107,7 +107,7 @@
 // Define the colors to cycle through
 const colors = ['#f2f2f2', '#ff796d', '#559bff', '#bdbdbd']; // Unselected, Conservative, Liberal, Unaffiliated
 const order = [1, 3, 0, 2];
-let colorCounts = [254, 0, 0, 0]; // Initialize count for each color index
+let colorCounts = [0, 0, 0, 0]; // Initialize count for each color index
 
 const maxWidth = 254;
 const barHeight = 20;
@@ -289,11 +289,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
   hexagons.forEach(function(hexagon) {
     // Initialize the color index directly on the hexagon elements
-    hexagon.colorIndex = 0; // Start from the first color
+    let colorIndex = colors.indexOf(hexagon.style.fill);
+    if (colorIndex === -1) {
+        hexagon.colorIndex = 0;
+        colorCounts[hexagon.colorIndex]++;
+    } else {
+        hexagon.colorIndex = colorIndex;
+        colorCounts[hexagon.colorIndex]++;
+    }
 
     hexagon.addEventListener('click', function() {
       initOrUpdateHexagonColorIndex(this);
-
     });
   });
 
