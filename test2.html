@@ -5,35 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>22대 총선 지역구 판세 스크래치패드</title>
     <style>
-        text {
-          pointer-events: none;
-        }
-        #editableTitle {
-            pointer-events: all;
-        }
-        svg {
-            width: 100%;
-            max-width: 960px; /* Adjust based on your preference */
-            height: auto;
-            margin: 20px auto;
-            display: block;
-            border: 1px solid #ccc; /* Just to visually delineate the SVG boundaries */
-        }
+      text {
+        pointer-events: none;
+        display:block;
+        white-space: nowrap;  /* this was implicit in Chrome, not in Firefox */
+      }
+      #editableTitle {
+          pointer-events: all;
+      }
+      svg {
+         width: 100%;
+         max-width: 960px; /* Adjust based on your preference */
+         height: auto;
+         margin: 20px auto;
+         display: block;
+         border: 1px solid #ccc; /* Just to visually delineate the SVG boundaries */
+      }
 
-        polyline.st5 {
-          fill: none !important;
-          stroke-width: 1px;
-          stroke: #333;
-        }
-        .st3 {
-          font-size: 16px !important;
-        }
-        .text-group .st3 {
-          font-size: 7px !important;
-          font-weight: 400;
-        }
+      polyline.st5 {
+        fill: none !important;
+        stroke-width: 1px;
+        stroke: #333;
+      }
+      .st0 {
+        fill: #f2f2f2;
+        stroke-width: 0.5;
+        color: #000000;
+        stroke: black;
+      }
+      .st1 {
+        fill: #040000;
+      }
+      .st2 {
+        font-family: "Noto Sans KR", sans-serif;
+      }
+      .st3 {
+        font-size: 16px !important;
+      }
+      .text-group .st3 {
+        font-size: 7px !important;
+        font-weight: 400;
+      }
+      .st4 {
+        font-family: "Noto Sans KR", sans-serif;
+      }
+      .st5 {
+        letter-spacing: 18;
+      }
+      .st6 {
+        fill: none;
+        stroke: #000000;
+        stroke-width: 2.5;
+        stroke-miterlimit: 10;
+      }
+      .st7 {
+        font-family: "Noto Sans KR", sans-serif;
+        font-size: 10px;
+        pointer-events: all; 
+      }
+      .sttitle{
+        font-family: "Noto Sans KR", sans-serif;
+        font-size: 20px;
+        font-weight: bold;
+      }
+      .stsubtitle{
+        font-family: "Noto Sans KR", sans-serif;
+        font-size: 10px;
+        pointer-events: all;
+      }
+      .stlegend{
+        font-family: "Noto Sans KR", sans-serif;
+        font-size: 12px;
+        font-weight: bold;
+      }
+      .stlegend2{
+        font-family: "Noto Sans KR", sans-serif;
+        font-size: 8px;
+      }
+      .stcaption{
+        font-family: "Noto Sans KR", sans-serif;
+        font-size: 8px;
+      }
+      .stval{
+        font-family: "Noto Sans KR", sans-serif;
+        font-size: 10px;
+        text-anchor: end;
+        pointer-events: all;
+      }
+      .stsummary{
+        font-family: "Noto Sans KR", sans-serif;
+        font-size: 20px;
+        text-anchor: end;
+      }
+      text.st2.st3.st4 {
+        pointer-events: all;
+        text-anchor: start; 
+      }
     </style>
-
 <script>
 // Define the colors to cycle through
 const colors = [    '#f2f2f2', // Unselected
@@ -305,77 +373,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </head>
 <body>
           <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 595.3 841.9" style="enable-background: new 0 0 595.3 841.9" xml:space="preserve">
-            <style type="text/css">
-              .st0 {
-                fill: #f2f2f2;
-                stroke-width: 0.5;
-                color: #000000;
-                stroke: black;
-              }
-              .st1 {
-                fill: #040000;
-              }
-              .st2 {
-                font-family: "Noto Sans KR", sans-serif;
-              }
-              .st3 {
-                font-size: 6.8482px;
-              }
-              .st4 {
-                font-family: "Noto Sans KR", sans-serif;
-              }
-              .st5 {
-                letter-spacing: 18;
-              }
-              .st6 {
-                fill: none;
-                stroke: #000000;
-                stroke-width: 2.5;
-                stroke-miterlimit: 10;
-              }
-              .st7 {
-                font-family: "Noto Sans KR", sans-serif;
-                font-size: 10px;
-                pointer-events: all; 
-              }
-              .sttitle{
-                font-family: "Noto Sans KR", sans-serif;
-                font-size: 20px;
-                font-weight: bold;
-              }
-              .stsubtitle{
-                font-family: "Noto Sans KR", sans-serif;
-                font-size: 10px;
-                pointer-events: all;
-              }
-              .stlegend{
-                font-family: "Noto Sans KR", sans-serif;
-                font-size: 12px;
-                font-weight: bold;
-              }
-              .stlegend2{
-                font-family: "Noto Sans KR", sans-serif;
-                font-size: 8px;
-              }
-              .stcaption{
-                font-family: "Noto Sans KR", sans-serif;
-                font-size: 8px;
-              }
-              .stval{
-                font-family: "Noto Sans KR", sans-serif;
-                font-size: 10px;
-                text-anchor: end;
-                pointer-events: all;
-              }
-              .stsummary{
-                font-family: "Noto Sans KR", sans-serif;
-                font-size: 20px;
-                text-anchor: end;
-              }
-              text.st2.st3.st4 {
-                pointer-events: all;
-              }
-            </style>
             <polygon class="st0 fill" points="168.5,92.4 168.5,111.2 184.8,120.6 201.1,111.2 201.1,92.4 184.8,82.9 " target="서병" region="인천" title="인천 서병"></polygon>
             <polygon class="st0 fill" points="201.1,92.4 201.1,111.2 217.4,120.6 233.7,111.2 233.7,92.4 217.4,82.9 " target="계양을" region="인천" title="인천 계양을"></polygon>
             <polygon class="st0 fill" points="233.7,92.4 233.7,111.2 250,120.6 266.3,111.2 266.3,92.4 250,82.9 " target="파주갑" region="경기" region2="경기북부권" title="경기 파주갑"></polygon>
