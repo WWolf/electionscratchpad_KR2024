@@ -115,12 +115,12 @@ const colors = [    '#f2f2f2', // Unselected
                     'rgba(230, 30, 43, 0.4)',  // lean
                     'rgba(230, 30, 43, 0.2)',  // tilt
                     'rgba(160, 32, 240, 0.8)', // tossup
-                    'rgba(21, 36, 132, 0.8)',  // Safe
-                    'rgba(21, 36, 132, 0.6)',  // likely
-                    'rgba(21, 36, 132, 0.4)',  // lean
                     'rgba(21, 36, 132, 0.2)',  // tilt
+                    'rgba(21, 36, 132, 0.4)',  // lean
+                    'rgba(21, 36, 132, 0.6)',  // likely
+                    'rgba(21, 36, 132, 0.8)',  // Safe
                 ];
-const order = [1, 2, 3, 4, 5, 0, 9, 8, 7, 6];
+const order = [1, 2, 3, 4, 5, 0, 6, 7, 8, 9];
 let colorCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Initialize count for each color index
 const labels = [
     '미정',
@@ -129,10 +129,10 @@ const labels = [
     '여당 우세 (Lean)', 
     '여당 경합우세 (Tilt)', 
     '백중세 (TossUp)', 
-    '야당 확실 (Safe)', 
-    '야당 유력 (Likely)', 
+    '야당 경합우세 (Tilt)',
     '야당 우세 (Lean)', 
-    '야당 경합우세 (Tilt)'
+    '야당 유력 (Likely)', 
+    '야당 확실 (Safe)', 
 ]; // Corresponding labels
 
 
@@ -179,7 +179,7 @@ function updateBarGraph() {
   ruling = colorCounts[1] + colorCounts[2] + colorCounts[3] + colorCounts[4];
   ruling_min = colorCounts[1];
   opposition = colorCounts[6] + colorCounts[7] + colorCounts[8] + colorCounts[9];
-  opposition_min = colorCounts[6];
+  opposition_min = colorCounts[9];
 
   const rulingText = document.getElementById('ruling');
   const oppositionText = document.getElementById('opposition');
@@ -292,6 +292,27 @@ function initOrUpdateHexagonColorIndex(hexagon) {
   }
 }
 
+// Function to initialize or update the color index for each hexagon
+function initOrUpdateHexagonColorIndex2(hexagon) {
+  if (hexagon.colorIndex === undefined) {
+    hexagon.colorIndex = 0; // Initialize with 0 if not already set
+  } else {
+
+    colorCounts[hexagon.colorIndex]--;
+    if (hexagon.colorIndex == 0) {
+        hexagon.colorIndex = colors.length - 1;
+    } else {
+        hexagon.colorIndex = (hexagon.colorIndex - 1) % colors.length; 
+    }
+    
+    colorCounts[hexagon.colorIndex]++;
+
+    hexagon.style.fill = colors[hexagon.colorIndex];
+
+    updateBarGraph();
+  }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   // Hexagons
   const hexagons = document.querySelectorAll('polygon.st0');
@@ -310,6 +331,11 @@ document.addEventListener('DOMContentLoaded', function() {
     hexagon.addEventListener('click', function() {
       initOrUpdateHexagonColorIndex(this);
     });
+
+    hexagon.addEventListener('contextmenu', function(event) {
+      event.preventDefault();
+      initOrUpdateHexagonColorIndex2(this);
+    });
   });
 
   setupLegend();
@@ -320,22 +346,33 @@ document.addEventListener('DOMContentLoaded', function() {
   regionTexts.forEach(function(textElement, index) {
 
     textElement.addEventListener('click', function() {
-      // Get the region from the clicked text element
       const region = textElement.getAttribute('region');
 
-      // Find all hexagons with the matching region attribute
       const hexagons = document.querySelectorAll(`polygon[region="${region}"]`);
 
-      // Toggle the fill color of all matching hexagons
       hexagons.forEach(function(hexagon) {
-        // Assuming you want to cycle through the same color set
-        initOrUpdateHexagonColorIndex(hexagon); // Function to update color index
-        hexagon.style.fill = colors[hexagon.colorIndex]; // Update color
+        initOrUpdateHexagonColorIndex(hexagon); 
+        hexagon.style.fill = colors[hexagon.colorIndex]; 
       });
 
-      // Optional: Update the bar graph if you're tracking color distribution
       updateBarGraph();
     });
+
+    textElement.addEventListener('contextmenu', function(event) {
+      event.preventDefault();
+
+      const region = textElement.getAttribute('region');
+
+      const hexagons = document.querySelectorAll(`polygon[region="${region}"]`);
+
+      hexagons.forEach(function(hexagon) {
+        initOrUpdateHexagonColorIndex2(hexagon); 
+        hexagon.style.fill = colors[hexagon.colorIndex]; 
+      });
+
+      updateBarGraph();
+    });
+    
   });
   
   // Select text elements associated with regions
@@ -354,6 +391,25 @@ document.addEventListener('DOMContentLoaded', function() {
       hexagons.forEach(function(hexagon) {
         // Assuming you want to cycle through the same color set
         initOrUpdateHexagonColorIndex(hexagon); // Function to update color index
+        hexagon.style.fill = colors[hexagon.colorIndex]; // Update color
+      });
+
+      // Optional: Update the bar graph if you're tracking color distribution
+      updateBarGraph();
+    });
+
+    textElement.addEventListener('contextmenu', function(event) {
+      event.preventDefault();
+      // Get the region from the clicked text element
+      const region2 = textElement.getAttribute('region2');
+
+      // Find all hexagons with the matching region attribute
+      const hexagons = document.querySelectorAll(`polygon[region2="${region2}"]`);
+
+      // Toggle the fill color of all matching hexagons
+      hexagons.forEach(function(hexagon) {
+        // Assuming you want to cycle through the same color set
+        initOrUpdateHexagonColorIndex2(hexagon); // Function to update color index
         hexagon.style.fill = colors[hexagon.colorIndex]; // Update color
       });
 
