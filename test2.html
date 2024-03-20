@@ -97,6 +97,12 @@
         text-anchor: end;
         pointer-events: all;
       }
+      .stload{
+        font-family: "Noto Sans KR", sans-serif;
+        font-size: 8px;
+        text-anchor: start;
+        pointer-events: all;
+      }
       .stsummary{
         font-family: "Noto Sans KR", sans-serif;
         font-size: 20px;
@@ -480,8 +486,78 @@ document.addEventListener('DOMContentLoaded', function() {
       });
   });
 
+  const svgLoadText = document.getElementById('load');
+  svgLoadText.addEventListener('click', function() {
+     const rect = svgLoadText.getBoundingClientRect();
+     const input = document.createElement('input');
+     input.type = 'file';
+     input.accept = '.html';
+
+     input.style.position = 'absolute';
+     input.style.left = `${rect.left+window.scrollX}px`;
+     input.style.top = `${rect.top+window.scrollY}px`;
+     input.style.width  = `${rect.width}px`;
+     input.style.height = `${rect.height}px`;
+
+     document.body.appendChild(input);
+     input.focus();
+
+     input.addEventListener('blur', function() {
+         document.body.removeChild(input);
+     });
+
+     input.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+
+                parseAndInitHexagons(content);
+            };
+            reader.readAsText(file);
+        }
+     });
+  });
+    
 
 });
+
+function parseAndInitHexagons(htmlContent) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlContent, "text/html");
+
+    const hexagons = doc.querySelectorAll('polygon.st0');
+
+    // If hexagons contains something, pass
+    if (hexagons) {
+      colorCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Initialize count for each color index
+  
+      hexagons.forEach(function(hexagon) {
+        // Initialize the color index directly on the hexagon elements
+        let colorIndex = colors.indexOf(hexagon.style.fill);
+        const element_title = hexagon.getAttribute('title');
+  
+        console.log(hexagon.style.fill);
+        
+        const target = document.querySelector(`[title="${element_title}"]`);
+  
+        console.log(colorIndex)
+  
+        if (colorIndex === -1) {
+            target.colorIndex = 0;
+            colorCounts[target.colorIndex]++;
+        } else {
+            target.colorIndex = colorIndex;
+            target.style.fill = hexagon.style.fill;
+            colorCounts[target.colorIndex]++;
+        }
+    
+      });
+  
+      updateBarGraph();
+    }
+}
 
 </script>
 
@@ -490,8 +566,8 @@ document.addEventListener('DOMContentLoaded', function() {
           <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 595.3 841.9" style="enable-background: new 0 0 595.3 841.9" xml:space="preserve">
             <polygon class="st0 fill" points="168.5,92.4 168.5,111.2 184.8,120.6 201.1,111.2 201.1,92.4 184.8,82.9 " target="서병" region="인천" title="인천 서병"></polygon>
             <polygon class="st0 fill" points="201.1,92.4 201.1,111.2 217.4,120.6 233.7,111.2 233.7,92.4 217.4,82.9 " target="계양을" region="인천" title="인천 계양을"></polygon>
-            <polygon class="st0 fill" points="233.7,92.4 233.7,111.2 250,120.6 266.3,111.2 266.3,92.4 250,82.9 " target="파주갑" region="경기" region2="경기북부권" title="경기 파주갑"></polygon>
-            <polygon class="st0 fill" points="266.3,92.4 266.3,111.2 282.6,120.6 299,111.2 299,92.4 282.6,82.9 " target="파주을" region="경기" region2="경기북부권" title="경기 파주을"></polygon>
+            <polygon class="st0 fill" points="233.7,92.4 233.7,111.2 250,120.6 266.3,111.2 266.3,92.4 250,82.9 " target="파주갑" region="경기" region2="경기경의권" title="경기 파주갑"></polygon>
+            <polygon class="st0 fill" points="266.3,92.4 266.3,111.2 282.6,120.6 299,111.2 299,92.4 282.6,82.9 " target="파주을" region="경기" region2="경기경의권" title="경기 파주을"></polygon>
             <polygon class="st0 fill" points="299,92.4 299,111.2 315.3,120.6 331.6,111.2 331.6,92.4 315.3,82.9 " target="춘천철원화천양구갑" region="강원" title="강원 춘천철원화천양구갑"></polygon>
             <polygon class="st0 fill" points="331.6,92.4 331.6,111.2 347.9,120.6 364.2,111.2 364.2,92.4 347.9,82.9 " target="춘천철원화천양구을" region="강원" title="강원 춘천철원화천양구을"></polygon>
             <polygon class="st0 fill" points="364.2,92.4 364.2,111.2 380.5,120.6 396.8,111.2 396.8,92.4 380.5,82.9 " target="강릉" region="강원" title="강원 강릉"></polygon>
@@ -500,44 +576,44 @@ document.addEventListener('DOMContentLoaded', function() {
             <polygon class="st0 fill" points="152.2,120.6 152.2,139.4 168.5,148.9 184.8,139.4 184.8,120.6 168.5,111.2 " target="서갑" region="인천" title="인천 서갑"></polygon>
             <polygon class="st0 fill" points="119.6,120.6 119.6,139.4 135.9,148.9 152.2,139.4 152.2,120.6 135.9,111.2 " target="중강화옹진" region="인천" title="인천 중강화옹진"></polygon>
             <polygon class="st0 fill" points="184.8,120.6 184.8,139.4 201.1,148.9 217.4,139.4 217.4,120.6 201.1,111.2 " target="계양갑" region="인천" title="인천 계양갑"></polygon>
-            <polygon class="st0 fill" points="217.4,120.6 217.4,139.4 233.7,148.9 250,139.4 250,120.6 233.7,111.2 " target="고양을" region="경기" region2="경기북부권" title="경기 고양을"></polygon>
-            <polygon class="st0 fill" points="250,120.6 250,139.4 266.3,148.9 282.6,139.4 282.6,120.6 266.3,111.2 " target="고양병" region="경기" region2="경기북부권" title="경기 고양병"></polygon>
-            <polygon class="st0 fill" points="282.6,120.6 282.6,139.4 299,148.9 315.3,139.4 315.3,120.6 299,111.2 " target="동두천양주연천을" region="경기" region2="경기북부권" title="경기 동두천양주연천을"></polygon>
-            <polygon class="st0 fill" points="315.3,120.6 315.3,139.4 331.6,148.9 347.9,139.4 347.9,120.6 331.6,111.2 " target="포천가평" region="경기" region2="경기북부권" title="경기 포천가평"></polygon>
-            <polygon class="st0 fill" points="347.9,120.6 347.9,139.4 364.2,148.9 380.5,139.4 380.5,120.6 364.2,111.2 " target="의정부갑" region="경기" region2="경기북부권" title="경기 의정부갑"></polygon>
+            <polygon class="st0 fill" points="217.4,120.6 217.4,139.4 233.7,148.9 250,139.4 250,120.6 233.7,111.2 " target="고양을" region="경기" region2="경기경의권" title="경기 고양을"></polygon>
+            <polygon class="st0 fill" points="250,120.6 250,139.4 266.3,148.9 282.6,139.4 282.6,120.6 266.3,111.2 " target="고양병" region="경기" region2="경기경의권" title="경기 고양병"></polygon>
+            <polygon class="st0 fill" points="282.6,120.6 282.6,139.4 299,148.9 315.3,139.4 315.3,120.6 299,111.2 " target="동두천양주연천을" region="경기" region2="경기경원권" title="경기 동두천양주연천을"></polygon>
+            <polygon class="st0 fill" points="315.3,120.6 315.3,139.4 331.6,148.9 347.9,139.4 347.9,120.6 331.6,111.2 " target="포천가평" region="경기" region2="경기경원권" title="경기 포천가평"></polygon>
+            <polygon class="st0 fill" points="347.9,120.6 347.9,139.4 364.2,148.9 380.5,139.4 380.5,120.6 364.2,111.2 " target="의정부갑" region="경기" region2="경기경원권" title="경기 의정부갑"></polygon>
             <polygon class="st0 fill" points="380.5,120.6 380.5,139.4 396.8,148.9 413.1,139.4 413.1,120.6 396.8,111.2 " target="원주갑" region="강원" title="강원 원주갑"></polygon>
             <polygon class="st0 fill" points="396.8,148.9 396.8,167.7 413.1,177.1 429.4,167.7 429.4,148.9 413.1,139.4 " target="원주을" region="강원" title="강원 원주을"></polygon>
             <polygon class="st0 fill" points="135.9,148.9 135.9,167.7 152.2,177.1 168.5,167.7 168.5,148.9 152.2,139.4 " target="연수갑" region="인천" title="인천 연수갑"></polygon>
             <polygon class="st0 fill" points="103.3,148.9 103.3,167.7 119.6,177.1 135.9,167.7 135.9,148.9 119.6,139.4 " target="연수을" region="인천" title="인천 연수을"></polygon>
             <polygon class="st0 fill" points="168.5,148.9 168.5,167.7 184.8,177.1 201.1,167.7 201.1,148.9 184.8,139.4 " target="부평을" region="인천" title="인천 부평을"></polygon>
-            <polygon class="st0 fill" points="201.1,148.9 201.1,167.7 217.4,177.1 233.7,167.7 233.7,148.9 217.4,139.4 " target="고양정" region="경기" region2="경기북부권" title="경기 고양정"></polygon>
-            <polygon class="st0 fill" points="233.7,148.9 233.7,167.7 250,177.1 266.3,167.7 266.3,148.9 250,139.4 " target="고양갑" region="경기" region2="경기북부권" title="경기 고양갑"></polygon>
-            <polygon class="st0 fill" points="266.3,148.9 266.3,167.7 282.6,177.1 299,167.7 299,148.9 282.6,139.4 " target="동두천양주연천갑" region="경기" region2="경기북부권" title="경기 동두천양주연천갑"></polygon>
+            <polygon class="st0 fill" points="201.1,148.9 201.1,167.7 217.4,177.1 233.7,167.7 233.7,148.9 217.4,139.4 " target="고양정" region="경기" region2="경기경의권" title="경기 고양정"></polygon>
+            <polygon class="st0 fill" points="233.7,148.9 233.7,167.7 250,177.1 266.3,167.7 266.3,148.9 250,139.4 " target="고양갑" region="경기" region2="경기경의권" title="경기 고양갑"></polygon>
+            <polygon class="st0 fill" points="266.3,148.9 266.3,167.7 282.6,177.1 299,167.7 299,148.9 282.6,139.4 " target="동두천양주연천갑" region="경기" region2="경기경원권" title="경기 동두천양주연천갑"></polygon>
             <polygon class="st0 fill" points="299,148.9 299,167.7 315.3,177.1 331.6,167.7 331.6,148.9 315.3,139.4 " target="강북갑" region="서울" region2="서울동북권" title="서울 강북갑"></polygon>
             <polygon class="st0 fill" points="331.6,148.9 331.6,167.7 347.9,177.1 364.2,167.7 364.2,148.9 347.9,139.4 " target="도봉을" region="서울" region2="서울동북권" title="서울 도봉을"></polygon>
-            <polygon class="st0 fill" points="364.2,148.9 364.2,167.7 380.5,177.1 396.8,167.7 396.8,148.9 380.5,139.4 " target="의정부을" region="경기" region2="경기북부권" title="경기 의정부을"></polygon>
+            <polygon class="st0 fill" points="364.2,148.9 364.2,167.7 380.5,177.1 396.8,167.7 396.8,148.9 380.5,139.4 " target="의정부을" region="경기" region2="경기경원권" title="경기 의정부을"></polygon>
             <polygon class="st0 fill" points="413.1,177.1 413.1,195.9 429.4,205.3 445.7,195.9 445.7,177.1 429.4,167.7 " target="동해태백삼척정선" region="강원" title="강원 동해태백삼척정선"></polygon>
             <polygon class="st0 fill" points="152.2,177.1 152.2,195.9 168.5,205.3 184.8,195.9 184.8,177.1 168.5,167.7 " target="부평갑" region="인천" title="인천 부평갑"></polygon>
             <polygon class="st0 fill" points="119.6,177.1 119.6,195.9 135.9,205.3 152.2,195.9 152.2,177.1 135.9,167.7 " target="동미추홀갑" region="인천" title="인천 동미추홀갑"></polygon>
-            <polygon class="st0 fill" points="184.8,177.1 184.8,195.9 201.1,205.3 217.4,195.9 217.4,177.1 201.1,167.7 " target="김포을" region="경기" title="경기 김포을"></polygon>
-            <polygon class="st0 fill" points="217.4,177.1 217.4,195.9 233.7,205.3 250,195.9 250,177.1 233.7,167.7 " target="김포갑" region="경기" title="경기 김포갑"></polygon>
+            <polygon class="st0 fill" points="184.8,177.1 184.8,195.9 201.1,205.3 217.4,195.9 217.4,177.1 201.1,167.7 " target="김포을" region="경기" region2="경기경의권" title="경기 김포을"></polygon>
+            <polygon class="st0 fill" points="217.4,177.1 217.4,195.9 233.7,205.3 250,195.9 250,177.1 233.7,167.7 " target="김포갑" region="경기" region2="경기경의권" title="경기 김포갑"></polygon>
             <polygon class="st0 fill" points="250,177.1 250,195.9 266.3,205.3 282.6,195.9 282.6,177.1 266.3,167.7 " target="은평을" region="서울" region2="서울서북권" title="서울 은평을"></polygon>
             <polygon class="st0 fill" points="282.6,177.1 282.6,195.9 299,205.3 315.3,195.9 315.3,177.1 299,167.7 " target="강북을" region="서울" region2="서울동북권" title="서울 강북을"></polygon>
             <polygon class="st0 fill" points="315.3,177.1 315.3,195.9 331.6,205.3 347.9,195.9 347.9,177.1 331.6,167.7 " target="도봉갑" region="서울" region2="서울동북권" title="서울 도봉갑"></polygon>
             <polygon class="st0 fill" points="347.9,177.1 347.9,195.9 364.2,205.3 380.5,195.9 380.5,177.1 364.2,167.7 " target="노원을" region="서울" region2="서울동북권" title="서울 노원을"></polygon>
-            <polygon class="st0 fill" points="380.5,177.1 380.5,195.9 396.8,205.3 413.1,195.9 413.1,177.1 396.8,167.7 " target="구리" region="경기" region2="경기북부권" title="경기 구리"></polygon>
-            <polygon class="st0 fill" points="429.4,205.3 429.4,224.2 445.7,233.6 462,224.2 462,205.3 445.7,195.9 " target="남양주을" region="경기"region2="경기북부권"  title="경기 남양주을"></polygon>
-            <polygon class="st0 fill" points="168.5,205.3 168.5,224.2 184.8,233.6 201.1,224.2 201.1,205.3 184.8,195.9 " target="부천병" region="경기" title="경기 부천병"></polygon>
+            <polygon class="st0 fill" points="380.5,177.1 380.5,195.9 396.8,205.3 413.1,195.9 413.1,177.1 396.8,167.7 " target="구리" region="경기" region2="경기동북권" title="경기 구리"></polygon>
+            <polygon class="st0 fill" points="429.4,205.3 429.4,224.2 445.7,233.6 462,224.2 462,205.3 445.7,195.9 " target="남양주을" region="경기"region2="경기동북권"  title="경기 남양주을"></polygon>
+            <polygon class="st0 fill" points="168.5,205.3 168.5,224.2 184.8,233.6 201.1,224.2 201.1,205.3 184.8,195.9 " target="부천병" region="경기" region2="경기서해안권" title="경기 부천병"></polygon>
             <polygon class="st0 fill" points="135.9,205.3 135.9,224.2 152.2,233.6 168.5,224.2 168.5,205.3 152.2,195.9 " target="동미추홀을" region="인천" title="인천 동미추홀을"></polygon>
-            <polygon class="st0 fill" points="201.1,205.3 201.1,224.2 217.4,233.6 233.7,224.2 233.7,205.3 217.4,195.9 " target="부천을" region="경기" title="경기 부천을"></polygon>
+            <polygon class="st0 fill" points="201.1,205.3 201.1,224.2 217.4,233.6 233.7,224.2 233.7,205.3 217.4,195.9 " target="부천을" region="경기" region2="경기서해안권" title="경기 부천을"></polygon>
             <polygon class="st0 fill" points="233.7,205.3 233.7,224.2 250,233.6 266.3,224.2 266.3,205.3 250,195.9 " target="은평갑" region="서울" region2="서울서북권" title="서울 은평갑"></polygon>
             <polygon class="st0 fill" points="266.3,205.3 266.3,224.2 282.6,233.6 299,224.2 299,205.3 282.6,195.9 " target="성북갑" region="서울" region2="서울동북권" title="서울 성북갑"></polygon>
             <polygon class="st0 fill" points="299,205.3 299,224.2 315.3,233.6 331.6,224.2 331.6,205.3 315.3,195.9 " target="성북을" region="서울" region2="서울동북권" title="서울 성북을"></polygon>
             <polygon class="st0 fill" points="331.6,205.3 331.6,224.2 347.9,233.6 364.2,224.2 364.2,205.3 347.9,195.9 " target="노원갑" region="서울" region2="서울동북권" title="서울 노원갑"></polygon>
             <polygon class="st0 fill" points="364.2,205.3 364.2,224.2 380.5,233.6 396.8,224.2 396.8,205.3 380.5,195.9 " target="중랑을" region="서울" region2="서울동북권" title="서울 중랑을"></polygon>
-            <polygon class="st0 fill" points="396.8,205.3 396.8,224.2 413.1,233.6 429.4,224.2 429.4,205.3 413.1,195.9 " target="남양주갑" region="경기" region2="경기북부권" title="경기 남양주갑"></polygon>
-            <polygon class="st0 fill" points="445.7,233.6 445.7,252.4 462,261.8 478.3,252.4 478.3,233.6 462,224.2 " target="남양주병" region="경기" region2="경기북부권" title="경기 남양주병"></polygon>
-            <polygon class="st0 fill" points="184.8,233.6 184.8,252.4 201.1,261.8 217.4,252.4 217.4,233.6 201.1,224.2 " target="부천갑" region="경기" title="경기 부천갑"></polygon>
+            <polygon class="st0 fill" points="396.8,205.3 396.8,224.2 413.1,233.6 429.4,224.2 429.4,205.3 413.1,195.9 " target="남양주갑" region="경기" region2="경기동북권" title="경기 남양주갑"></polygon>
+            <polygon class="st0 fill" points="445.7,233.6 445.7,252.4 462,261.8 478.3,252.4 478.3,233.6 462,224.2 " target="남양주병" region="경기" region2="경기동북권" title="경기 남양주병"></polygon>
+            <polygon class="st0 fill" points="184.8,233.6 184.8,252.4 201.1,261.8 217.4,252.4 217.4,233.6 201.1,224.2 " target="부천갑" region="경기" region2="경기서해안권" title="경기 부천갑"></polygon>
             <polygon class="st0 fill" points="152.2,233.6 152.2,252.4 168.5,261.8 184.8,252.4 184.8,233.6 168.5,224.2 " target="남동을" region="인천" title="인천 남동을"></polygon>
             <polygon class="st0 fill" points="217.4,233.6 217.4,252.4 233.7,261.8 250,252.4 250,233.6 233.7,224.2 " target="마포을" region="서울" region2="서울서북권" title="서울 마포을"></polygon>
             <polygon class="st0 fill" points="250,233.6 250,252.4 266.3,261.8 282.6,252.4 282.6,233.6 266.3,224.2 " target="서대문을" region="서울" region2="서울서북권" title="서울 서대문을"></polygon>
@@ -553,16 +629,16 @@ document.addEventListener('DOMContentLoaded', function() {
             <polygon class="st0 fill" points="201.1,261.8 201.1,280.7 217.4,290.1 233.7,280.7 233.7,261.8 217.4,252.4 " target="강서을" region="서울" region2="서울서남권" title="서울 강서을"></polygon>
             <polygon class="st0 fill" points="233.7,261.8 233.7,280.7 250,290.1 266.3,280.7 266.3,261.8 250,252.4 " target="마포갑" region="서울" region2="서울서북권" title="서울 마포갑"></polygon>
             <polygon class="st0 fill" points="266.3,261.8 266.3,280.7 282.6,290.1 299,280.7 299,261.8 282.6,252.4 " target="종로" region="서울" region2="서울도심권" title="서울 종로"></polygon>
-            <polygon class="st0 fill" points="299,261.8 299,280.7 315.3,290.1 331.6,280.7 331.6,261.8 315.3,252.4 " target="중성동갑" region="서울" region2="서울동북권" title="서울 중성동갑"></polygon>
-            <polygon class="st0 fill" points="331.6,261.8 331.6,280.7 347.9,290.1 364.2,280.7 364.2,261.8 347.9,252.4 " target="중성동을" region="서울" region2="서울동북권" title="서울 중성동을"></polygon>
+            <polygon class="st0 fill" points="299,261.8 299,280.7 315.3,290.1 331.6,280.7 331.6,261.8 315.3,252.4 " target="중성동갑" region="서울" region2="서울도심권" title="서울 중성동갑"></polygon>
+            <polygon class="st0 fill" points="331.6,261.8 331.6,280.7 347.9,290.1 364.2,280.7 364.2,261.8 347.9,252.4 " target="중성동을" region="서울" region2="서울도심권" title="서울 중성동을"></polygon>
             <polygon class="st0 fill" points="364.2,261.8 364.2,280.7 380.5,290.1 396.8,280.7 396.8,261.8 380.5,252.4 " target="송파을" region="서울" region2="서울동남권" title="서울 송파을"></polygon>
             <polygon class="st0 fill" points="396.8,261.8 396.8,280.7 413.1,290.1 429.4,280.7 429.4,261.8 413.1,252.4 " target="광진을" region="서울" region2="서울동북권" title="서울 광진을"></polygon>
             <polygon class="st0 fill" points="445.7,290.1 445.7,308.9 462,318.3 478.3,308.9 478.3,290.1 462,280.7 " target="하남갑" region="경기" region2="경기동남권" title="경기 하남갑"></polygon>
             <polygon class="st0 fill" points="478.3,290.1 478.3,308.9 494.6,318.3 510.9,308.9 510.9,290.1 494.6,280.7 " target="광주갑" region="경기" region2="경기동남권" title="경기 광주갑"></polygon>
             <polygon class="st0 fill" points="184.8,290.1 184.8,308.9 201.1,318.3 217.4,308.9 217.4,290.1 201.1,280.7 " target="강서병" region="서울" region2="서울서남권" title="서울 강서병"></polygon>
-            <polygon class="st0 fill" points="152.2,290.1 152.2,308.9 168.5,318.3 184.8,308.9 184.8,290.1 168.5,280.7 " target="시흥갑" region="경기" region2="경기서남권" title="경기 시흥갑"></polygon>
-            <polygon class="st0 fill" points="119.6,290.1 119.6,308.9 135.9,318.3 152.2,308.9 152.2,290.1 135.9,280.7 " target="시흥을" region="경기" region2="경기서남권" title="경기 시흥을"></polygon>
-            <polygon class="st0 fill" points="87,290.1 87,308.9 103.3,318.3 119.6,308.9 119.6,290.1 103.3,280.7 " target="안산을" region="경기" region2="경기서남권" title="경기 안산을"></polygon>
+            <polygon class="st0 fill" points="152.2,290.1 152.2,308.9 168.5,318.3 184.8,308.9 184.8,290.1 168.5,280.7 " target="시흥갑" region="경기" region2="경기서해안권" title="경기 시흥갑"></polygon>
+            <polygon class="st0 fill" points="119.6,290.1 119.6,308.9 135.9,318.3 152.2,308.9 152.2,290.1 135.9,280.7 " target="시흥을" region="경기" region2="경기서해안권" title="경기 시흥을"></polygon>
+            <polygon class="st0 fill" points="87,290.1 87,308.9 103.3,318.3 119.6,308.9 119.6,290.1 103.3,280.7 " target="안산을" region="경기" region2="경기서해안권" title="경기 안산을"></polygon>
             <polygon class="st0 fill" points="217.4,290.1 217.4,308.9 233.7,318.3 250,308.9 250,290.1 233.7,280.7 " target="양천을" region="서울" region2="서울서남권" title="서울 양천을"></polygon>
             <polygon class="st0 fill" points="250,290.1 250,308.9 266.3,318.3 282.6,308.9 282.6,290.1 266.3,280.7 " target="양천갑" region="서울" region2="서울서남권" title="서울 양천갑"></polygon>
             <polygon class="st0 fill" points="282.6,290.1 282.6,308.9 299,318.3 315.3,308.9 315.3,290.1 299,280.7 " target="용산" region="서울" region2="서울도심권" title="서울 용산"></polygon>
@@ -570,12 +646,12 @@ document.addEventListener('DOMContentLoaded', function() {
             <polygon class="st0 fill" points="347.9,290.1 347.9,308.9 364.2,318.3 380.5,308.9 380.5,290.1 364.2,280.7 " target="강남갑" region="서울" region2="서울동남권" title="서울 강남갑"></polygon>
             <polygon class="st0 fill" points="380.5,290.1 380.5,308.9 396.8,318.3 413.1,308.9 413.1,290.1 396.8,280.7 " target="송파갑" region="서울" region2="서울동남권" title="서울 송파갑"></polygon>
             <polygon class="st0 fill" points="413.1,290.1 413.1,308.9 429.4,318.3 445.7,308.9 445.7,290.1 429.4,280.7 " target="강동을" region="서울" region2="서울동남권" title="서울 강동을"></polygon>
-            <polygon class="st0 fill" points="429.4,318.3 429.4,337.1 445.7,346.6 462,337.1 462,318.3 445.7,308.9 " target="성남분당갑" region="경기" region2="경기동남권" title="경기 성남분당갑"></polygon>
+            <polygon class="st0 fill" points="429.4,318.3 429.4,337.1 445.7,346.6 462,337.1 462,318.3 445.7,308.9 " target="성남분당갑" region="경기" region2="경기경부권" title="경기 성남분당갑"></polygon>
             <polygon class="st0 fill" points="462,318.3 462,337.1 478.3,346.6 494.6,337.1 494.6,318.3 478.3,308.9 " target="광주을" region="경기" region2="경기동남권" title="경기 광주을"></polygon>
-            <polygon class="st0 fill" points="168.5,318.3 168.5,337.1 184.8,346.6 201.1,337.1 201.1,318.3 184.8,308.9 " target="광명을" region="경기" region2="경기서남권" title="경기 광명을"></polygon>
-            <polygon class="st0 fill" points="135.9,318.3 135.9,337.1 152.2,346.6 168.5,337.1 168.5,318.3 152.2,308.9 " target="광명갑" region="경기" region2="경기서남권" title="경기 광명갑"></polygon>
-            <polygon class="st0 fill" points="103.3,318.3 103.3,337.1 119.6,346.6 135.9,337.1 135.9,318.3 119.6,308.9 " target="안산갑" region="경기" region2="경기서남권" title="경기 안산갑"></polygon>
-            <polygon class="st0 fill" points="70.7,318.3 70.7,337.1 87,346.6 103.3,337.1 103.3,318.3 87,308.9 " target="안산병" region="경기" region2="경기서남권" title="경기 안산병"></polygon>
+            <polygon class="st0 fill" points="168.5,318.3 168.5,337.1 184.8,346.6 201.1,337.1 201.1,318.3 184.8,308.9 " target="광명을" region="경기" region2="경기서해안권" title="경기 광명을"></polygon>
+            <polygon class="st0 fill" points="135.9,318.3 135.9,337.1 152.2,346.6 168.5,337.1 168.5,318.3 152.2,308.9 " target="광명갑" region="경기" region2="경기서해안권" title="경기 광명갑"></polygon>
+            <polygon class="st0 fill" points="103.3,318.3 103.3,337.1 119.6,346.6 135.9,337.1 135.9,318.3 119.6,308.9 " target="안산갑" region="경기" region2="경기서해안권" title="경기 안산갑"></polygon>
+            <polygon class="st0 fill" points="70.7,318.3 70.7,337.1 87,346.6 103.3,337.1 103.3,318.3 87,308.9 " target="안산병" region="경기" region2="경기서해안권" title="경기 안산병"></polygon>
             <polygon class="st0 fill" points="201.1,318.3 201.1,337.1 217.4,346.6 233.7,337.1 233.7,318.3 217.4,308.9 " target="구로갑" region="서울" region2="서울서남권" title="서울 구로갑"></polygon>
             <polygon class="st0 fill" points="233.7,318.3 233.7,337.1 250,346.6 266.3,337.1 266.3,318.3 250,308.9 " target="구로을" region="서울" region2="서울서남권" title="서울 구로을"></polygon>
             <polygon class="st0 fill" points="266.3,318.3 266.3,337.1 282.6,346.6 299,337.1 299,318.3 282.6,308.9 " target="영등포갑" region="서울" region2="서울서남권" title="서울 영등포갑"></polygon>
@@ -584,45 +660,45 @@ document.addEventListener('DOMContentLoaded', function() {
             <polygon class="st0 fill" points="364.2,318.3 364.2,337.1 380.5,346.6 396.8,337.1 396.8,318.3 380.5,308.9 " target="강남을" region="서울" region2="서울동남권" title="서울 강남을"></polygon>
             <polygon class="st0 fill" points="396.8,318.3 396.8,337.1 413.1,346.6 429.4,337.1 429.4,318.3 413.1,308.9 " target="송파병" region="서울" region2="서울동남권" title="서울 송파병"></polygon>
             <polygon class="st0 fill" points="478.3,346.6 478.3,365.4 494.6,374.8 510.9,365.4 510.9,346.6 494.6,337.1 " target="여주양평" region="경기" region2="경기동남권" title="경기 여주양평"></polygon>
-            <polygon class="st0 fill" points="217.4,346.6 217.4,365.4 233.7,374.8 250,365.4 250,346.6 233.7,337.1 " target="군포" region="경기" region2="경기서남권" title="경기 군포"></polygon>
-            <polygon class="st0 fill" points="184.8,346.6 184.8,365.4 201.1,374.8 217.4,365.4 217.4,346.6 201.1,337.1 " target="화성병" region="경기" region2="경기서남권" title="경기 화성병"></polygon>
-            <polygon class="st0 fill" points="152.2,346.6 152.2,365.4 168.5,374.8 184.8,365.4 184.8,346.6 168.5,337.1 " target="안양동안을" region="경기" region2="경기서남권" title="경기 안양동안을"></polygon>
+            <polygon class="st0 fill" points="217.4,346.6 217.4,365.4 233.7,374.8 250,365.4 250,346.6 233.7,337.1 " target="군포" region="경기" region2="경기경부권" title="경기 군포"></polygon>
+            <polygon class="st0 fill" points="184.8,346.6 184.8,365.4 201.1,374.8 217.4,365.4 217.4,346.6 201.1,337.1 " target="화성병" region="경기" region2="경기서해안권" title="경기 화성병"></polygon>
+            <polygon class="st0 fill" points="152.2,346.6 152.2,365.4 168.5,374.8 184.8,365.4 184.8,346.6 168.5,337.1 " target="안양동안을" region="경기" region2="경기경부권" title="경기 안양동안을"></polygon>
             <polygon class="st0 fill" points="250,346.6 250,365.4 266.3,374.8 282.6,365.4 282.6,346.6 266.3,337.1 " target="관악갑" region="서울" region2="서울서남권" title="서울 관악갑"></polygon>
             <polygon class="st0 fill" points="282.6,346.6 282.6,365.4 299,374.8 315.3,365.4 315.3,346.6 299,337.1 " target="관악을" region="서울" region2="서울서남권" title="서울 관악을"></polygon>
             <polygon class="st0 fill" points="315.3,346.6 315.3,365.4 331.6,374.8 347.9,365.4 347.9,346.6 331.6,337.1 " target="서초갑" region="서울" region2="서울동남권" title="서울 서초갑"></polygon>
             <polygon class="st0 fill" points="347.9,346.6 347.9,365.4 364.2,374.8 380.5,365.4 380.5,346.6 364.2,337.1 " target="강남병" region="서울" region2="서울동남권" title="서울 강남병"></polygon>
-            <polygon class="st0 fill" points="380.5,346.6 380.5,365.4 396.8,374.8 413.1,365.4 413.1,346.6 396.8,337.1 " target="성남수정" region="경기" region2="경기동남권" title="경기 성남수정"></polygon>
-            <polygon class="st0 fill" points="413.1,346.6 413.1,365.4 429.4,374.8 445.7,365.4 445.7,346.6 429.4,337.1 " target="성남중원" region="경기" region2="경기동남권" title="경기 성남중원"></polygon>
-            <polygon class="st0 fill" points="445.7,346.6 445.7,365.4 462,374.8 478.3,365.4 478.3,346.6 462,337.1 " target="성남분당을" region="경기" region2="경기동남권" title="경기 성남분당을"></polygon>
+            <polygon class="st0 fill" points="380.5,346.6 380.5,365.4 396.8,374.8 413.1,365.4 413.1,346.6 396.8,337.1 " target="성남수정" region="경기" region2="경기경부권" title="경기 성남수정"></polygon>
+            <polygon class="st0 fill" points="413.1,346.6 413.1,365.4 429.4,374.8 445.7,365.4 445.7,346.6 429.4,337.1 " target="성남중원" region="경기" region2="경기경부권" title="경기 성남중원"></polygon>
+            <polygon class="st0 fill" points="445.7,346.6 445.7,365.4 462,374.8 478.3,365.4 478.3,346.6 462,337.1 " target="성남분당을" region="경기" region2="경기경부권" title="경기 성남분당을"></polygon>
             <polygon class="st0 fill" points="494.6,374.8 494.6,393.6 510.9,403 527.2,393.6 527.2,374.8 510.9,365.4 " target="이천" region="경기" region2="경기동남권" title="경기 이천"></polygon>
-            <polygon class="st0 fill" points="233.7,374.8 233.7,393.6 250,403 266.3,393.6 266.3,374.8 250,365.4 " target="화성을" region="경기" region2="경기서남권" title="경기 화성을"></polygon>
-            <polygon class="st0 fill" points="201.1,374.8 201.1,393.6 217.4,403 233.7,393.6 233.7,374.8 217.4,365.4 " target="화성정" region="경기" region2="경기서남권" title="경기 화성정"></polygon>
-            <polygon class="st0 fill" points="168.5,374.8 168.5,393.6 184.8,403 201.1,393.6 201.1,374.8 184.8,365.4 " target="안양만안" region="경기" region2="경기서남권" title="경기 안양만안"></polygon>
-            <polygon class="st0 fill" points="135.9,374.8 135.9,393.6 152.2,403 168.5,393.6 168.5,374.8 152.2,365.4 " target="안양동안갑" region="경기" region2="경기서남권" title="경기 안양동안갑"></polygon>
+            <polygon class="st0 fill" points="233.7,374.8 233.7,393.6 250,403 266.3,393.6 266.3,374.8 250,365.4 " target="화성을" region="경기" region2="경기서해안권" title="경기 화성을"></polygon>
+            <polygon class="st0 fill" points="201.1,374.8 201.1,393.6 217.4,403 233.7,393.6 233.7,374.8 217.4,365.4 " target="화성정" region="경기" region2="경기서해안권" title="경기 화성정"></polygon>
+            <polygon class="st0 fill" points="168.5,374.8 168.5,393.6 184.8,403 201.1,393.6 201.1,374.8 184.8,365.4 " target="안양만안" region="경기" region2="경기경부권" title="경기 안양만안"></polygon>
+            <polygon class="st0 fill" points="135.9,374.8 135.9,393.6 152.2,403 168.5,393.6 168.5,374.8 152.2,365.4 " target="안양동안갑" region="경기" region2="경기경부권" title="경기 안양동안갑"></polygon>
             <polygon class="st0 fill" points="266.3,374.8 266.3,393.6 282.6,403 299,393.6 299,374.8 282.6,365.4 " target="금천" region="서울" region2="서울서남권" title="서울 금천"></polygon>
-            <polygon class="st0 fill" points="299,374.8 299,393.6 315.3,403 331.6,393.6 331.6,374.8 315.3,365.4 " target="의왕과천" region="경기" region2="경기서남권" title="경기 의왕과천"></polygon>
+            <polygon class="st0 fill" points="299,374.8 299,393.6 315.3,403 331.6,393.6 331.6,374.8 315.3,365.4 " target="의왕과천" region="경기" region2="경기경부권" title="경기 의왕과천"></polygon>
             <polygon class="st0 fill" points="331.6,374.8 331.6,393.6 347.9,403 364.2,393.6 364.2,374.8 347.9,365.4 " target="서초을" region="서울" region2="서울동남권" title="서울 서초을"></polygon>
-            <polygon class="st0 fill" points="364.2,374.8 364.2,393.6 380.5,403 396.8,393.6 396.8,374.8 380.5,365.4 " target="용인정" region="경기" region2="경기동남권" title="경기 용인정"></polygon>
-            <polygon class="st0 fill" points="396.8,374.8 396.8,393.6 413.1,403 429.4,393.6 429.4,374.8 413.1,365.4 " target="용인병" region="경기" region2="경기동남권" title="경기 용인병"></polygon>
-            <polygon class="st0 fill" points="429.4,374.8 429.4,393.6 445.7,403 462,393.6 462,374.8 445.7,365.4 " target="용인갑" region="경기" region2="경기동남권" title="경기 용인갑"></polygon>
-            <polygon class="st0 fill" points="462,374.8 462,393.6 478.3,403 494.6,393.6 494.6,374.8 478.3,365.4 " target="용인을" region="경기" region2="경기동남권" title="경기 용인을"></polygon>
+            <polygon class="st0 fill" points="364.2,374.8 364.2,393.6 380.5,403 396.8,393.6 396.8,374.8 380.5,365.4 " target="용인정" region="경기" region2="경기경부권" title="경기 용인정"></polygon>
+            <polygon class="st0 fill" points="396.8,374.8 396.8,393.6 413.1,403 429.4,393.6 429.4,374.8 413.1,365.4 " target="용인병" region="경기" region2="경기경부권" title="경기 용인병"></polygon>
+            <polygon class="st0 fill" points="429.4,374.8 429.4,393.6 445.7,403 462,393.6 462,374.8 445.7,365.4 " target="용인갑" region="경기" region2="경기경부권" title="경기 용인갑"></polygon>
+            <polygon class="st0 fill" points="462,374.8 462,393.6 478.3,403 494.6,393.6 494.6,374.8 478.3,365.4 " target="용인을" region="경기" region2="경기경부권" title="경기 용인을"></polygon>
             <polygon class="st0 fill" points="478.3,403 478.3,421.9 494.6,431.3 510.9,421.9 510.9,403 494.6,393.6 " target="의성청송영덕울진" region="경북" title="경북 의성청송영덕울진"></polygon>
-            <polygon class="st0 fill" points="217.4,403 217.4,421.9 233.7,431.3 250,421.9 250,403 233.7,393.6 " target="화성갑" region="경기" region2="경기서남권" title="경기 화성갑"></polygon>
+            <polygon class="st0 fill" points="217.4,403 217.4,421.9 233.7,431.3 250,421.9 250,403 233.7,393.6 " target="화성갑" region="경기" region2="경기서해안권" title="경기 화성갑"></polygon>
             <polygon class="st0 fill" points="184.8,403 184.8,421.9 201.1,431.3 217.4,421.9 217.4,403 201.1,393.6 " target="충주" region="충북" title="충북 충주"></polygon>
-            <polygon class="st0 fill" points="250,403 250,421.9 266.3,431.3 282.6,421.9 282.6,403 266.3,393.6 " target="오산" region="경기" region2="경기서남권" title="경기 오산"></polygon>
-            <polygon class="st0 fill" points="282.6,403 282.6,421.9 299,431.3 315.3,421.9 315.3,403 299,393.6 " target="수원갑" region="경기" region2="경기서남권" title="경기 수원갑"></polygon>
-            <polygon class="st0 fill" points="315.3,403 315.3,421.9 331.6,431.3 347.9,421.9 347.9,403 331.6,393.6 " target="수원을" region="경기" region2="경기서남권" title="경기 수원을"></polygon>
-            <polygon class="st0 fill" points="347.9,403 347.9,421.9 364.2,431.3 380.5,421.9 380.5,403 364.2,393.6 " target="수원병" region="경기" region2="경기서남권" title="경기 수원병"></polygon>
-            <polygon class="st0 fill" points="380.5,403 380.5,421.9 396.8,431.3 413.1,421.9 413.1,403 396.8,393.6 " target="수원정" region="경기" region2="경기서남권" title="경기 수원정"></polygon>
-            <polygon class="st0 fill" points="413.1,403 413.1,421.9 429.4,431.3 445.7,421.9 445.7,403 429.4,393.6 " target="안성" region="경기" region2="경기동남권" title="경기 안성"></polygon>
+            <polygon class="st0 fill" points="250,403 250,421.9 266.3,431.3 282.6,421.9 282.6,403 266.3,393.6 " target="오산" region="경기" region2="경기서해안권" title="경기 오산"></polygon>
+            <polygon class="st0 fill" points="282.6,403 282.6,421.9 299,431.3 315.3,421.9 315.3,403 299,393.6 " target="수원갑" region="경기" region2="경기경부권" title="경기 수원갑"></polygon>
+            <polygon class="st0 fill" points="315.3,403 315.3,421.9 331.6,431.3 347.9,421.9 347.9,403 331.6,393.6 " target="수원을" region="경기" region2="경기경부권" title="경기 수원을"></polygon>
+            <polygon class="st0 fill" points="347.9,403 347.9,421.9 364.2,431.3 380.5,421.9 380.5,403 364.2,393.6 " target="수원병" region="경기" region2="경기경부권" title="경기 수원병"></polygon>
+            <polygon class="st0 fill" points="380.5,403 380.5,421.9 396.8,431.3 413.1,421.9 413.1,403 396.8,393.6 " target="수원정" region="경기" region2="경기경부권" title="경기 수원정"></polygon>
+            <polygon class="st0 fill" points="413.1,403 413.1,421.9 429.4,431.3 445.7,421.9 445.7,403 429.4,393.6 " target="안성" region="경기" region2="경기경부권" title="경기 안성"></polygon>
             <polygon class="st0 fill" points="445.7,403 445.7,421.9 462,431.3 478.3,421.9 478.3,403 462,393.6 " target="영주영양봉화" region="경북" title="경북 영주영양봉화"></polygon>
             <polygon class="st0 fill" points="233.7,431.3 233.7,450.1 250,459.5 266.3,450.1 266.3,431.3 250,421.9 " target="제천단양" region="충북" title="충북 제천단양"></polygon>
             <polygon class="st0 fill" points="201.1,431.3 201.1,450.1 217.4,459.5 233.7,450.1 233.7,431.3 217.4,421.9 " target="청주상당" region="충북" title="충북 청주상당"></polygon>
             <polygon class="st0 fill" points="168.5,431.3 168.5,450.1 184.8,459.5 201.1,450.1 201.1,431.3 184.8,421.9 " target="증평진천음성" region="충북" title="충북 증평진천음성"></polygon>
-            <polygon class="st0 fill" points="266.3,431.3 266.3,450.1 282.6,459.5 299,450.1 299,431.3 282.6,421.9 " target="평택병" region="경기" region2="경기서남권" title="경기 평택병"></polygon>
-            <polygon class="st0 fill" points="299,431.3 299,450.1 315.3,459.5 331.6,450.1 331.6,431.3 315.3,421.9 " target="평택갑" region="경기" region2="경기서남권" title="경기 평택갑"></polygon>
-            <polygon class="st0 fill" points="331.6,431.3 331.6,450.1 347.9,459.5 364.2,450.1 364.2,431.3 347.9,421.9 " target="평택을" region="경기" region2="경기서남권" title="경기 평택을"></polygon>
-            <polygon class="st0 fill" points="364.2,431.3 364.2,450.1 380.5,459.5 396.8,450.1 396.8,431.3 380.5,421.9 " target="수원무" region="경기" region2="경기서남권" title="경기 수원무"></polygon>
+            <polygon class="st0 fill" points="266.3,431.3 266.3,450.1 282.6,459.5 299,450.1 299,431.3 282.6,421.9 " target="평택병" region="경기" region2="경기서해안권" title="경기 평택병"></polygon>
+            <polygon class="st0 fill" points="299,431.3 299,450.1 315.3,459.5 331.6,450.1 331.6,431.3 315.3,421.9 " target="평택갑" region="경기" region2="경기서해안권" title="경기 평택갑"></polygon>
+            <polygon class="st0 fill" points="331.6,431.3 331.6,450.1 347.9,459.5 364.2,450.1 364.2,431.3 347.9,421.9 " target="평택을" region="경기" region2="경기서해안권" title="경기 평택을"></polygon>
+            <polygon class="st0 fill" points="364.2,431.3 364.2,450.1 380.5,459.5 396.8,450.1 396.8,431.3 380.5,421.9 " target="수원무" region="경기" region2="경기경부권" title="경기 수원무"></polygon>
             <polygon class="st0 fill" points="396.8,431.3 396.8,450.1 413.1,459.5 429.4,450.1 429.4,431.3 413.1,421.9 " target="상주문경" region="경북" title="경북 상주문경"></polygon>
             <polygon class="st0 fill" points="429.4,431.3 429.4,450.1 445.7,459.5 462,450.1 462,431.3 445.7,421.9 " target="김천" region="경북" title="경북 김천"></polygon>
             <polygon class="st0 fill" points="462,431.3 462,450.1 478.3,459.5 494.6,450.1 494.6,431.3 478.3,421.9 " target="안동예천" region="경북" title="경북 안동예천"></polygon>
@@ -839,10 +915,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 경기
               </text>
               <polyline class="st5" points="36.9,357.2 43.9,364.7 151.8,364.7 	"></polyline>
-              <text transform="matrix(1 0 0 1 500 222)" class="st2 st3 st4" region="경기">경기</text>
-              <text transform="matrix(1 0 0 1 540 200)" class="st7" region2="경기동남권">동남권</text>
-              <text transform="matrix(1 0 0 1 540 220)" class="st7" region2="경기서남권">서남권</text>
-              <text transform="matrix(1 0 0 1 540 240)" class="st7" region2="경기북부권">북부권</text>
+              <text transform="matrix(1 0 0 1 500 212)" class="st2 st3 st4" region="경기">경기</text>
+              <text transform="matrix(1 0 0 1 540 160)" class="st7" region2="경기경의권">경의권</text>
+              <text transform="matrix(1 0 0 1 540 180)" class="st7" region2="경기경원권">경원권</text>
+              <text transform="matrix(1 0 0 1 540 200)" class="st7" region2="경기동북권">동북권</text>
+              <text transform="matrix(1 0 0 1 540 220)" class="st7" region2="경기동남권">동남권</text>
+              <text transform="matrix(1 0 0 1 540 240)" class="st7" region2="경기경부권">경부권</text>
+              <text transform="matrix(1 0 0 1 540 260)" class="st7" region2="경기서해안권">서해안권</text>
             </g>
             <g>
               <text transform="matrix(1 0 0 1 63.5543 424.0042)" class="st2 st3 st4" region="충북">
@@ -1735,12 +1814,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 <text id='opposition' x='440' y='22' fill='black' class='stsummary'>0</text> 
             </g>
             <g>
-                <text id="editableTitle" x="10" y="800" fill="black" class="sttitle">22대총선 지역구 정덕 scratchpad(클릭수정)</text>
-                <text id="editableSubTitle" x="10" y="820" fill="black" class="stsubtitle">이제 브라우저에서 저장하면 상태를 다시 불러오고 작업하실 수 있습니다.(클릭수정)</text>
+                <text id="editableTitle" x="10" y="800" fill="black" class="sttitle">22대총선 지역구 판세 그림판 (클릭제목수정)</text>
+                <text id="editableSubTitle" x="10" y="820" fill="black" class="stsubtitle">파일 저장하면 상태 저장 다시 열어볼 수 있음, 저장된 다른 파일 로딩 가능합니다.(클릭수정)</text>
             </g>
+        <text id="load" x="10" y="835" fill="black" class="stload">과거 그림판 데이터 로드(클릭 후 파일선택)</text>
 	    <text id="source" x="400" y="800" fill="black" class="stcaption">https://github.com/WWolf/electionscratchpad_KR2024</text>
-            <text id="acknowledgement" x="400" y="820" fill="black" class="stcaption">poll-mbc.co.kr/poll2024/ 시각화 참조</text>
-	    <text id="disclaimer" x="400" y="830" fill="black" class="stcaption">(주의) 습작용으로 판세 그려보는 가벼운 페이지입니다</text>
+        <text id="acknowledgement" x="400" y="820" fill="black" class="stcaption">poll-mbc.co.kr/poll2024/ 시각화 참조</text>
+	    <text id="disclaimer" x="400" y="830" fill="black" class="stcaption">(주의) 누구나 판세 그려보는 가벼운 그림판입니다</text>
           </svg>
 </body>
 </html>
