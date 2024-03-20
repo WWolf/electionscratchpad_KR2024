@@ -11,12 +11,16 @@
 
 * [test2.html](https://wwolf.github.io/electionscratchpad_KR2024/test2.html) 흔히들 말하는 백중세니, 열세니, 우세니 하는 단계들을 양당 사이에 더 집어넣고 지역구만 그려보는 작업이며, 생활권역 그룹들을 더 추가했습니다.
 
-<img width="50%" alt="지역구 판세 그림판" src="https://github.com/WWolf/electionscratchpad_KR2024/assets/531000/a462abd6-d77c-4a80-b9b9-4136c8f48bea">
+<img width="50%" alt="지역구 판세 그림판" src="https://github.com/WWolf/electionscratchpad_KR2024/assets/531000/5624aa3e-2951-43ec-b389-aa5a929f5e6d">
 
 # Updates
 * Firefox에서도 깨지지 않고 동작합니다.
 * 이제 HTML을 다른 이름으로 저장하시면 그대로 다시 로드해서 작업하실 수 있습니다.
 * [test2.html](https://wwolf.github.io/electionscratchpad_KR2024/test2.html)의 경우 범례에 숫자가 함께 집계됩니다.
+
+* [test2.html](https://wwolf.github.io/electionscratchpad_KR2024/test2.html)는 이제 저장된 다른 페이지를 로딩하실 수 있습니다.
+* 경기도 생활권역을 [경기연구원](https://www.kgnews.co.kr/news/article.html?no=734962)에서 정리한 6개 권역으로 업데이트했습니다.
+* 서울에서 중구+성동구 지역구를 "도심권"으로 편입했습니다.
 
 # Acknowledgements
 
