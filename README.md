@@ -9,7 +9,7 @@
 <img width="50%" alt="전체 판세 그림판" src="https://github.com/WWolf/electionscratchpad_KR2024/assets/531000/9229935d-54a0-4f90-87a8-e334073d39d8">
 
 
-* [test2.html](https://wwolf.github.io/electionscratchpad_KR2024/test2.html) 흔히들 말하는 백중세니, 열세니, 우세니 하는 단계들을 양당 사이에 더 집어넣고 지역구만 그려보는 작업이며, 생활권역 그룹들을 더 추가했습니다.
+* [test2.html](https://wwolf.github.io/electionscratchpad_KR2024/test2.html) 흔히들 말하는 백중세니, 열세니, 우세니 하는 단계들을 양당 사이에 더 집어넣고 지역구만 그려보는 작업이며, 생활권역 그룹들을 더 추가했습니다. 마우스 오른쪽 버튼을 누르시면 반대로 toggling이 됩니다.
 
 <img width="50%" alt="지역구 판세 그림판" src="https://github.com/WWolf/electionscratchpad_KR2024/assets/531000/5624aa3e-2951-43ec-b389-aa5a929f5e6d">
 
